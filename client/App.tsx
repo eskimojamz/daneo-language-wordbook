@@ -11,12 +11,42 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import useCachedResources from './hooks/useCachedResources';
 import useColorScheme from './hooks/useColorScheme';
 import Navigation from './navigation';
-import { useCallback, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+export interface Word {
+  term: string;
+  definition: string;
+  status: string;
+  dateAdded: number;
+}
+export interface GlobalContextInterface {
+  myWords: Word[];
+  setMyWords: React.Dispatch<React.SetStateAction<Word[]>>
+}
+
+export const GlobalContext = createContext<GlobalContextInterface | null>(null)
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
   const colorScheme = useColorScheme();
   const [appIsReady, setAppIsReady] = useState(false);
+
+  // initialize myWords state from AsyncStorage
+  const [myWords, setMyWords] = useState<Word[]>(() => {
+    const storageRef = AsyncStorage.getItem('wordbook')
+    return (
+      storageRef && typeof storageRef === 'string'
+        ? JSON.parse(storageRef)
+        : []
+    )
+  })
+
+  // global state object for GlobalContext Provider value
+  const globalState = {
+    myWords,
+    setMyWords
+  }
 
   useEffect(() => {
     // show SplashScreen, while fonts load
@@ -49,8 +79,10 @@ export default function App() {
 
   return (
     <SafeAreaProvider onLayout={onLayout}>
-      <Navigation colorScheme={colorScheme} />
-      <StatusBar />
+      <GlobalContext.Provider value={globalState}>
+        <Navigation colorScheme={colorScheme} />
+        <StatusBar />
+      </GlobalContext.Provider>
     </SafeAreaProvider>
   );
 }

@@ -1,9 +1,14 @@
+import React from 'react'
 import { ScrollView, StyleSheet } from 'react-native';
 import { Text, View } from '../components/Themed';
 import { LinearGradient } from 'expo-linear-gradient';
 import { RootTabScreenProps } from '../types';
+import { GlobalContext, GlobalContextInterface, Word } from '../App';
+import Colors from '../constants/Colors';
 
 export default function WordbookScreen({ navigation }: RootTabScreenProps<'Wordbook'>) {
+  const { myWords } = React.useContext(GlobalContext) as GlobalContextInterface
+
   return (
     <ScrollView style={styles.container}>
       <LinearGradient
@@ -13,21 +18,28 @@ export default function WordbookScreen({ navigation }: RootTabScreenProps<'Wordb
         <Text style={{ fontSize: 32, fontFamily: 'DMSans_700Bold' }} colorName='textDark'>Wordbook</Text>
         <Text style={{ fontSize: 32, fontFamily: 'DMSans_700Bold' }} colorName='textDark'>Quiz</Text>
       </LinearGradient>
-      <View style={styles.wordCard}>
-        <View style={styles.wordCardMain}>
-          <View style={styles.wordCardGroup}>
-            <Text style={styles.wordCardLabel} colorName='textGrey'>TERM</Text>
-            <Text style={styles.wordCardTerm} colorName='textDark'>Tree</Text>
+      {/* Map word cards */}
+      {myWords?.map((word: Word) => {
+        return (
+          <View style={styles.wordCard} key={word.term + word.dateAdded.toString()}>
+            <View style={styles.wordCardContainer}>
+              <View style={styles.wordCardMain}>
+                <View style={styles.wordCardTop}>
+                  <Text style={styles.wordCardLabel} colorName='textGrey'>TERM</Text>
+                  <Text style={styles.wordCardTerm} colorName='textDark'>{word.term}</Text>
+                </View>
+                <View>
+                  <Text style={styles.wordCardLabel} colorName='textGrey'>DEFINITION</Text>
+                  <Text style={styles.wordCardTerm} colorName='textTint'>{word.definition}</Text>
+                </View>
+              </View>
+              <View style={styles.wordCardBottom}>
+                <Text style={styles.wordCardStatus} colorName='textDark'>{word.status}</Text>
+              </View>
+            </View>
           </View>
-          <View style={styles.wordCardGroup}>
-            <Text style={styles.wordCardLabel} colorName='textGrey'>DEFINITION</Text>
-            <Text style={styles.wordCardTerm} colorName='textTint'>나무</Text>
-          </View>
-        </View>
-        <View style={styles.wordCardBottom}>
-          <Text style={styles.wordCardStatus} colorName='textDark'>Mastered</Text>
-        </View>
-      </View>
+        )
+      })}
     </ScrollView>
   );
 }
@@ -36,6 +48,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 16,
+    backgroundColor: '#fff'
   },
   quizCard: {
     height: 170,
@@ -46,38 +59,43 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end'
   },
   wordCard: {
-    height: 170,
+    height: 'auto',
     width: 'auto',
-    padding: 16,
+    paddingHorizontal: 16,
     display: 'flex',
     justifyContent: 'space-around'
+  },
+  wordCardContainer: {
+    paddingVertical: 16,
+    borderBottomColor: '#E5E5E5',
+    borderBottomWidth: 1,
   },
   wordCardMain: {
     display: 'flex',
     gap: 4
   },
-  wordCardGroup: {
-    display: 'flex',
+  wordCardTop: {
+    marginBottom: 4
   },
   wordCardLabel: {
     fontSize: 12,
-    fontFamily: 'DMSans_700Bold'
+    fontFamily: 'DMSans_700Bold',
+    marginBottom: 0
   },
   wordCardTerm: {
     fontSize: 24,
     fontFamily: 'DMSans_700Bold'
   },
   wordCardBottom: {
-    display: 'flex',
-    alignItems: 'flex-end'
+    alignSelf: 'flex-end',
+    backgroundColor: '#5DD8C2',
+    borderRadius: 15
   },
   wordCardStatus: {
-    backgroundColor: '#5DD8C2',
     fontSize: 13,
     fontFamily: 'DMSans_500Medium',
     textAlign: 'center',
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 15
   }
 });

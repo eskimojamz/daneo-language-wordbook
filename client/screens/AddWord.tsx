@@ -1,20 +1,58 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import React from "react";
-import { Button, Keyboard, Pressable, StyleSheet, Switch, TextInput, TouchableWithoutFeedback } from "react-native";
+import { Keyboard, Pressable, StyleSheet, Switch, TextInput, TouchableWithoutFeedback } from "react-native";
+import { GlobalContext, GlobalContextInterface, Word } from "../App";
 import { View, Text } from "../components/Themed";
 import Colors from "../constants/Colors";
 
 interface StateProps {
     isTranslate: boolean;
-    order: number
+    isSaved: boolean;
+    order: number;
+    term: string;
+    definition: string;
 }
 
 export default function AddWord() {
     const [state, setState] = React.useState<StateProps>({
         isTranslate: false,
+        isSaved: false,
         order: 0,
+        term: '',
+        definition: '',
     })
-    const { isTranslate, order } = state
+    const {
+        isTranslate,
+        isSaved,
+        order,
+        term,
+        definition
+    } = state
+
+    const { myWords, setMyWords } = React.useContext(GlobalContext) as GlobalContextInterface
+
+    const handleSave = () => {
+        const entry: Word = {
+            term: term,
+            definition: definition,
+            status: 'Learning',
+            dateAdded: Date.now()
+        }
+        try {
+            setMyWords(prev => [...prev, entry])
+            AsyncStorage.setItem('wordbook', JSON.stringify(myWords))
+        } catch (err) {
+            console.log(err)
+        }
+        setState(prev => ({ ...prev, term: '', definition: '' }))
+        Keyboard.dismiss()
+        setState(prev => ({ ...prev, isSaved: true }))
+        setTimeout(() => {
+            setState(prev => ({ ...prev, isSaved: false }))
+        }, 1000);
+    }
+    console.log(myWords)
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
@@ -34,14 +72,18 @@ export default function AddWord() {
                     </View>
                     {isTranslate &&
                         <View style={styles.swap}>
-                            <Text style={styles.swapLabel} colorName="textDark">{order === 0 ? 'English' : 'Korean'}</Text>
+                            <View style={styles.swapLabelContainer}>
+                                <Text style={styles.swapLabel} colorName="textDark">{order === 0 ? 'English' : 'Korean'}</Text>
+                            </View>
                             <Pressable
-                                style={styles.swapBtn}
+                                style={({ pressed }) => [styles.swapBtn, { opacity: pressed ? 0.7 : 1 }]}
                                 onPress={() => setState({ ...state, order: order === 0 ? 1 : 0 })}
                             >
                                 <MaterialCommunityIcons name="swap-horizontal-circle" size={32} color="#8085E7" />
                             </Pressable>
-                            <Text style={styles.swapLabel} colorName="textDark">{order === 0 ? 'Korean' : 'English'}</Text>
+                            <View style={styles.swapLabelContainer}>
+                                <Text style={styles.swapLabel} colorName="textDark">{order === 0 ? 'Korean' : 'English'}</Text>
+                            </View>
                         </View>
                     }
                 </View>
@@ -51,11 +93,20 @@ export default function AddWord() {
                     <TextInput
                         style={styles.input}
                         selectionColor={Colors['light']['tint']}
+                        value={term}
+                        onChangeText={(newText) => setState({ ...state, term: newText })}
                     />
                 </View>
 
                 {isTranslate &&
-                    <Pressable style={styles.btnTranslate}>
+                    <Pressable
+                        style={({ pressed }) => [
+                            styles.btnTranslate,
+                            {
+                                backgroundColor: pressed ? Colors['dark']['lightPurple'] : '#fff',
+                                borderColor: pressed ? Colors['dark']['lightPurple'] : Colors['light']['tint']
+                            }
+                        ]}>
                         <Text colorName="tint" style={styles.btnText}>Translate</Text>
                     </Pressable>
                 }
@@ -65,12 +116,25 @@ export default function AddWord() {
                     <TextInput
                         style={styles.input}
                         selectionColor={Colors['light']['tint']}
+                        value={definition}
+                        onChangeText={(newText) => setState({ ...state, definition: newText })}
                     />
                 </View>
 
-                <Pressable style={styles.btnSave}>
+                <Pressable
+                    style={({ pressed }) => [styles.btnSave, { opacity: pressed ? 0.7 : 1 }]}
+                    onPress={handleSave}
+                >
                     <Text colorName="textWhite" style={styles.btnText}>Save</Text>
                 </Pressable>
+
+                {isSaved &&
+                    <View style={styles.savedContainer}>
+                        <Text colorName="tint" style={styles.label}>
+                            Saved to Wordbook
+                        </Text>
+                    </View>
+                }
             </View>
         </TouchableWithoutFeedback>
     );
@@ -79,7 +143,8 @@ export default function AddWord() {
 const styles = StyleSheet.create({
     container: {
         padding: 16,
-        flex: 1
+        flex: 1,
+        position: 'relative'
     },
     group: {
         display: 'flex',
@@ -100,6 +165,13 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    swapLabelContainer: {
+        backgroundColor: Colors['dark']['lightPurple'],
+        borderRadius: 15,
+        paddingVertical: 8,
+        width: 75,
+        alignItems: 'center'
+    },
     swapLabel: {
         fontSize: 14,
         fontFamily: 'DMSans_700Bold',
@@ -119,8 +191,6 @@ const styles = StyleSheet.create({
         marginTop: 8,
     },
     btnTranslate: {
-        backgroundColor: '#fff',
-        borderColor: Colors['light']['tint'],
         borderWidth: 2,
         borderRadius: 25,
         alignItems: 'center',
@@ -141,5 +211,14 @@ const styles = StyleSheet.create({
     btnText: {
         fontSize: 15,
         fontFamily: 'DMSans_700Bold',
+    },
+    savedContainer: {
+        position: 'absolute',
+        top: 16,
+        alignSelf: 'center',
+        backgroundColor: Colors['dark']['lightPurple'],
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        borderRadius: 10
     }
 })
