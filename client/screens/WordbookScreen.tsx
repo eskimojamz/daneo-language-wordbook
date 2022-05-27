@@ -5,9 +5,18 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { RootTabScreenProps } from '../types';
 import { GlobalContext, GlobalContextInterface, Word } from '../App';
 import Colors from '../constants/Colors';
+import { useQuery } from 'react-query';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function WordbookScreen({ navigation }: RootTabScreenProps<'Wordbook'>) {
   const { myWords } = React.useContext(GlobalContext) as GlobalContextInterface
+  const { data: myWordsData } = useQuery('wordbook', async () => {
+    return await AsyncStorage.getItem('wordbook').then(data => {
+      console.log(data)
+      return data ? JSON.parse(data) : undefined
+    })
+  })
+  console.log(myWordsData)
 
   return (
     <ScrollView style={styles.container}>
@@ -19,7 +28,7 @@ export default function WordbookScreen({ navigation }: RootTabScreenProps<'Wordb
         <Text style={{ fontSize: 32, fontFamily: 'DMSans_700Bold' }} colorName='textDark'>Quiz</Text>
       </LinearGradient>
       {/* Map word cards */}
-      {myWords?.map((word: Word) => {
+      {myWordsData && myWordsData.map((word: Word) => {
         return (
           <View style={styles.wordCard} key={word.term + word.dateAdded.toString()}>
             <View style={styles.wordCardContainer}>

@@ -2,56 +2,45 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React from "react";
 import { Keyboard, Pressable, StyleSheet, Switch, TextInput, TouchableWithoutFeedback } from "react-native";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { GlobalContext, GlobalContextInterface, Word } from "../App";
 import { View, Text } from "../components/Themed";
 import Colors from "../constants/Colors";
+import useWordbook from "../hooks/useWordbook";
 
-interface StateProps {
-    isTranslate: boolean;
-    isSaved: boolean;
-    order: number;
+export interface WordStateProps {
     term: string;
     definition: string;
+    isSaved: boolean;
+}
+
+interface TranslateProps {
+    isTranslate: boolean;
+    order: 0 | 1;
 }
 
 export default function AddWord() {
-    const [state, setState] = React.useState<StateProps>({
-        isTranslate: false,
-        isSaved: false,
-        order: 0,
+    const [word, setWord] = React.useState<WordStateProps>({
         term: '',
         definition: '',
+        isSaved: false
+    })
+    const {
+        term,
+        definition,
+        isSaved
+    } = word
+
+    const [translate, setTranslate] = React.useState<TranslateProps>({
+        isTranslate: false,
+        order: 0
     })
     const {
         isTranslate,
-        isSaved,
-        order,
-        term,
-        definition
-    } = state
+        order
+    } = translate
 
-    const { myWords, setMyWords } = React.useContext(GlobalContext) as GlobalContextInterface
-
-    const handleSave = () => {
-        const entry: Word = {
-            term: term,
-            definition: definition,
-            status: 'Learning',
-            dateAdded: Date.now()
-        }
-        try {
-            setMyWords(prev => [...prev, entry])
-            AsyncStorage.setItem('wordbook', JSON.stringify(myWords))
-        } catch (err) {
-            console.log(err)
-        }
-        setState(prev => ({ ...prev, term: '', definition: '' }))
-        Keyboard.dismiss()
-        setState(prev => ({ ...prev, isSaved: true }))
-        setTimeout(() => {
-            setState(prev => ({ ...prev, isSaved: false }))
-        }, 1000);
-    }
+    const [myWords, createEntry] = useWordbook(word, setWord)
     console.log(myWords)
 
     return (
@@ -62,7 +51,7 @@ export default function AddWord() {
                         <Text style={styles.label} colorName='textGrey'>TRANSLATE MODE</Text>
                         <Switch
                             value={isTranslate}
-                            onValueChange={(value) => setState({ ...state, isTranslate: value })}
+                            onValueChange={(value) => setTranslate(prev => ({ ...prev, isTranslate: value }))}
                             thumbColor='#fff'
                             //@ts-expect-error type 
                             activeThumbColor='#fff'
@@ -77,7 +66,7 @@ export default function AddWord() {
                             </View>
                             <Pressable
                                 style={({ pressed }) => [styles.swapBtn, { opacity: pressed ? 0.7 : 1 }]}
-                                onPress={() => setState({ ...state, order: order === 0 ? 1 : 0 })}
+                                onPress={() => setTranslate(prev => ({ ...prev, order: order === 0 ? 1 : 0 }))}
                             >
                                 <MaterialCommunityIcons name="swap-horizontal-circle" size={32} color="#8085E7" />
                             </Pressable>
@@ -94,7 +83,7 @@ export default function AddWord() {
                         style={styles.input}
                         selectionColor={Colors['light']['tint']}
                         value={term}
-                        onChangeText={(newText) => setState({ ...state, term: newText })}
+                        onChangeText={(newText) => setWord(prev => ({ ...prev, term: newText }))}
                     />
                 </View>
 
@@ -117,13 +106,13 @@ export default function AddWord() {
                         style={styles.input}
                         selectionColor={Colors['light']['tint']}
                         value={definition}
-                        onChangeText={(newText) => setState({ ...state, definition: newText })}
+                        onChangeText={(newText) => setWord(prev => ({ ...prev, definition: newText }))}
                     />
                 </View>
 
                 <Pressable
                     style={({ pressed }) => [styles.btnSave, { opacity: pressed ? 0.7 : 1 }]}
-                    onPress={handleSave}
+                    onPress={() => createEntry()}
                 >
                     <Text colorName="textWhite" style={styles.btnText}>Save</Text>
                 </Pressable>

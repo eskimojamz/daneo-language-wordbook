@@ -13,6 +13,7 @@ import useColorScheme from './hooks/useColorScheme';
 import Navigation from './navigation';
 import React, { createContext, useCallback, useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 export interface Word {
   term: string;
@@ -26,6 +27,8 @@ export interface GlobalContextInterface {
 }
 
 export const GlobalContext = createContext<GlobalContextInterface | null>(null)
+
+const queryClient = new QueryClient()
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
@@ -79,10 +82,12 @@ export default function App() {
 
   return (
     <SafeAreaProvider onLayout={onLayout}>
-      <GlobalContext.Provider value={globalState}>
-        <Navigation colorScheme={colorScheme} />
-        <StatusBar />
-      </GlobalContext.Provider>
+      <QueryClientProvider client={queryClient}>
+        <GlobalContext.Provider value={globalState}>
+          <Navigation colorScheme={colorScheme} />
+          <StatusBar />
+        </GlobalContext.Provider>
+      </QueryClientProvider>
     </SafeAreaProvider>
   );
 }
