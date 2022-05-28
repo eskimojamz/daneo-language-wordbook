@@ -24,6 +24,7 @@ import Settings from '../screens/Settings';
 import Plus from '../assets/icons/Plus';
 import AddWord from '../screens/AddWord';
 import AddWordBase from '../screens/AddWordBase';
+import Dictionary from '../screens/Dictionary';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -56,7 +57,17 @@ function RootNavigator() {
               fontSize: 24,
               fontFamily: 'DMSans_700Bold'
             }
-          }} />
+          }}
+        />
+        <Stack.Screen name="Dictionary" component={Dictionary}
+          options={{
+            headerTitleStyle: {
+              color: Colors[colorScheme].textDark,
+              fontSize: 24,
+              fontFamily: 'DMSans_700Bold'
+            }
+          }}
+        />
         <Stack.Screen name="Modal" component={ModalScreen} />
       </Stack.Group>
     </Stack.Navigator>

@@ -1,12 +1,17 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
 import React from "react";
-import { Keyboard, Pressable, StyleSheet, Switch, TextInput, TouchableWithoutFeedback } from "react-native";
+import { Keyboard, Modal, Pressable, StyleSheet, Switch, TextInput, TouchableWithoutFeedback } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import WebView from "react-native-webview";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { GlobalContext, GlobalContextInterface, Word } from "../App";
 import { View, Text } from "../components/Themed";
 import Colors from "../constants/Colors";
 import useWordbook from "../hooks/useWordbook";
+import translate from "../utils/gTranslate";
+import Dictionary from "./Dictionary";
 
 export interface WordStateProps {
     term: string;
@@ -14,12 +19,20 @@ export interface WordStateProps {
     isSaved: boolean;
 }
 
+enum targetEnum {
+    en = 'en',
+    ko = 'ko'
+}
+
 interface TranslateProps {
     isTranslate: boolean;
-    order: 0 | 1;
+    target: targetEnum.en | targetEnum.ko;
+    showNaver: boolean;
 }
 
 export default function AddWord() {
+    const navigation = useNavigation()
+
     const [word, setWord] = React.useState<WordStateProps>({
         term: '',
         definition: '',
@@ -31,17 +44,31 @@ export default function AddWord() {
         isSaved
     } = word
 
-    const [translate, setTranslate] = React.useState<TranslateProps>({
+    const [translateState, setTranslate] = React.useState<TranslateProps>({
         isTranslate: false,
-        order: 0
+        target: targetEnum.ko,
+        showNaver: false,
     })
     const {
         isTranslate,
-        order
-    } = translate
+        target,
+        showNaver
+    } = translateState
 
-    const [myWords, createEntry] = useWordbook(word, setWord)
-    console.log(myWords)
+    // myWords array, createEntry mutation to localStorage
+    const [_, createEntry] = useWordbook(word, setWord)
+
+    const { mutateAsync: translateTerm } = useMutation(() => translate(term, target),
+        {
+            onError: (error) => {
+                console.error(error)
+            },
+            onSuccess: (translated) => {
+                console.log(translated)
+                setWord(prev => ({ ...prev, definition: translated }))
+            }
+        }
+    )
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
@@ -62,16 +89,16 @@ export default function AddWord() {
                     {isTranslate &&
                         <View style={styles.swap}>
                             <View style={styles.swapLabelContainer}>
-                                <Text style={styles.swapLabel} colorName="textDark">{order === 0 ? 'English' : 'Korean'}</Text>
+                                <Text style={styles.swapLabel} colorName="textDark">{target === targetEnum.ko ? 'English' : 'Korean'}</Text>
                             </View>
                             <Pressable
                                 style={({ pressed }) => [styles.swapBtn, { opacity: pressed ? 0.7 : 1 }]}
-                                onPress={() => setTranslate(prev => ({ ...prev, order: order === 0 ? 1 : 0 }))}
+                                onPress={() => setTranslate(prev => ({ ...prev, target: target === targetEnum.en ? targetEnum.ko : targetEnum.en }))}
                             >
                                 <MaterialCommunityIcons name="swap-horizontal-circle" size={32} color="#8085E7" />
                             </Pressable>
                             <View style={styles.swapLabelContainer}>
-                                <Text style={styles.swapLabel} colorName="textDark">{order === 0 ? 'Korean' : 'English'}</Text>
+                                <Text style={styles.swapLabel} colorName="textDark">{target === targetEnum.ko ? 'Korean' : 'English'}</Text>
                             </View>
                         </View>
                     }
@@ -88,16 +115,28 @@ export default function AddWord() {
                 </View>
 
                 {isTranslate &&
-                    <Pressable
-                        style={({ pressed }) => [
-                            styles.btnTranslate,
-                            {
-                                backgroundColor: pressed ? Colors['dark']['lightPurple'] : '#fff',
-                                borderColor: pressed ? Colors['dark']['lightPurple'] : Colors['light']['tint']
-                            }
-                        ]}>
-                        <Text colorName="tint" style={styles.btnText}>Translate</Text>
-                    </Pressable>
+                    <View style={{ flexDirection: 'row', paddingHorizontal: (16 / -2) }}>
+                        <Pressable
+                            style={({ pressed }) => [
+                                styles.btnTranslate,
+                                {
+                                    backgroundColor: pressed ? Colors['dark']['lightPurple'] : '#fff',
+                                    borderColor: pressed ? Colors['dark']['lightPurple'] : Colors['light']['tint']
+                                }
+                            ]}
+                            onPress={() => translateTerm()}
+                        >
+                            <Text colorName="tint" style={styles.btnText}>Translate</Text>
+                        </Pressable>
+                        <Pressable style={[styles.btnTranslate, { backgroundColor: '#000677' }]}
+                            // onPress={() => setTranslate(prev => ({ ...prev, showNaver: true }))}
+                            onPress={() => navigation.navigate('Dictionary', { term })}
+                        >
+                            <Text colorName="textWhite" style={styles.btnText}>
+                                View in Dictionary
+                            </Text>
+                        </Pressable>
+                    </View>
                 }
 
                 <View style={styles.group}>
@@ -180,12 +219,14 @@ const styles = StyleSheet.create({
         marginTop: 8,
     },
     btnTranslate: {
+        flex: 1,
         borderWidth: 2,
         borderRadius: 25,
         alignItems: 'center',
         justifyContent: 'center',
         paddingVertical: 8,
-        marginTop: 16
+        marginTop: 16,
+        marginHorizontal: 8
     },
     btnSave: {
         backgroundColor: Colors['light']['tint'],

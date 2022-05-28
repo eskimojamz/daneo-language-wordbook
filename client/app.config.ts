@@ -1,4 +1,6 @@
-{
+import 'dotenv/config';
+
+export default {
   "expo": {
     "name": "Daneo",
     "slug": "daneo",
@@ -29,6 +31,9 @@
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
+    },
+    "extra": {
+      translateKey: process.env.TRANSLATE_KEY
     }
   }
-}
+};
