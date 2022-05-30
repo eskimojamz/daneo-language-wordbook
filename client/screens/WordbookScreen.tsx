@@ -1,5 +1,5 @@
 import React from 'react'
-import { ScrollView, StyleSheet } from 'react-native';
+import { Modal, Pressable, ScrollView, StyleSheet } from 'react-native';
 import { Text, View } from '../components/Themed';
 import { LinearGradient } from 'expo-linear-gradient';
 import { RootTabScreenProps } from '../types';
@@ -7,6 +7,7 @@ import { GlobalContext, GlobalContextInterface, Word } from '../App';
 import Colors from '../constants/Colors';
 import { useQuery } from 'react-query';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Haptics from 'expo-haptics'
 
 export default function WordbookScreen({ navigation }: RootTabScreenProps<'Wordbook'>) {
   const { myWords } = React.useContext(GlobalContext) as GlobalContextInterface
@@ -30,7 +31,15 @@ export default function WordbookScreen({ navigation }: RootTabScreenProps<'Wordb
       {/* Map word cards */}
       {myWordsData && myWordsData.map((word: Word) => {
         return (
-          <View style={styles.wordCard} key={word.term + word.dateAdded.toString()}>
+          <Pressable
+            style={styles.wordCard}
+            key={word.term + word.dateAdded.toString()}
+            onLongPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).then(() => {
+                navigation.navigate('EditWord', { term: word.term, definition: word.definition })
+              })
+            }}
+          >
             <View style={styles.wordCardContainer}>
               <View style={styles.wordCardMain}>
                 <View style={styles.wordCardTop}>
@@ -46,7 +55,7 @@ export default function WordbookScreen({ navigation }: RootTabScreenProps<'Wordb
                 <Text style={styles.wordCardStatus} colorName='textDark'>{word.status}</Text>
               </View>
             </View>
-          </View>
+          </Pressable>
         )
       })}
     </ScrollView>
@@ -56,7 +65,6 @@ export default function WordbookScreen({ navigation }: RootTabScreenProps<'Wordb
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 16,
     backgroundColor: '#fff'
   },
   quizCard: {

@@ -6,7 +6,7 @@ import {
 } from '@expo-google-fonts/dm-sans';
 import * as Font from 'expo-font';
 import { StatusBar } from 'expo-status-bar';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import useCachedResources from './hooks/useCachedResources';
 import useColorScheme from './hooks/useColorScheme';
@@ -14,6 +14,9 @@ import Navigation from './navigation';
 import React, { createContext, useCallback, useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { ActionSheetProvider } from '@expo/react-native-action-sheet';
+import { HoldMenuProvider } from 'react-native-hold-menu';
+import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 
 export interface Word {
   term: string;
@@ -83,10 +86,14 @@ export default function App() {
   return (
     <SafeAreaProvider onLayout={onLayout}>
       <QueryClientProvider client={queryClient}>
-        <GlobalContext.Provider value={globalState}>
-          <Navigation colorScheme={colorScheme} />
-          <StatusBar />
-        </GlobalContext.Provider>
+        <HoldMenuProvider theme={colorScheme} iconComponent={SimpleLineIcons}>
+          <ActionSheetProvider>
+            <GlobalContext.Provider value={globalState}>
+              <Navigation colorScheme={colorScheme} />
+              <StatusBar />
+            </GlobalContext.Provider>
+          </ActionSheetProvider>
+        </HoldMenuProvider>
       </QueryClientProvider>
     </SafeAreaProvider>
   );

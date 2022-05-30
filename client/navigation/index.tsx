@@ -3,7 +3,7 @@
  * https://reactnavigation.org/docs/getting-started
  *
  */
-import { FontAwesome, SimpleLineIcons } from '@expo/vector-icons';
+import { SimpleLineIcons } from '@expo/vector-icons';
 import { BottomTabBar, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -25,12 +25,14 @@ import Plus from '../assets/icons/Plus';
 import AddWord from '../screens/AddWord';
 import AddWordBase from '../screens/AddWordBase';
 import Dictionary from '../screens/Dictionary';
+import EditWord from '../screens/EditWord';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
     <NavigationContainer
       linking={LinkingConfiguration}
-      theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+      theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
+    >
       <RootNavigator />
     </NavigationContainer>
   );
@@ -52,6 +54,17 @@ function RootNavigator() {
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen name="AddWord" component={AddWord}
           options={{
+            headerTitle: 'Add Word',
+            headerTitleStyle: {
+              color: Colors[colorScheme].textDark,
+              fontSize: 24,
+              fontFamily: 'DMSans_700Bold'
+            }
+          }}
+        />
+        <Stack.Screen name="EditWord" component={EditWord}
+          options={{
+            headerTitle: 'Edit Word',
             headerTitleStyle: {
               color: Colors[colorScheme].textDark,
               fontSize: 24,

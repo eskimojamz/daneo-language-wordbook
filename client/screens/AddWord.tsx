@@ -115,21 +115,21 @@ export default function AddWord() {
                 </View>
 
                 {isTranslate &&
-                    <View style={{ flexDirection: 'row', paddingHorizontal: (16 / -2) }}>
+                    <View style={{ flexDirection: 'row' }}>
                         <Pressable
                             style={({ pressed }) => [
                                 styles.btnTranslate,
                                 {
                                     backgroundColor: pressed ? Colors['dark']['lightPurple'] : '#fff',
-                                    borderColor: pressed ? Colors['dark']['lightPurple'] : Colors['light']['tint']
+                                    borderColor: pressed ? Colors['dark']['lightPurple'] : Colors['light']['tint'],
+                                    marginRight: 8
                                 }
                             ]}
                             onPress={() => translateTerm()}
                         >
                             <Text colorName="tint" style={styles.btnText}>Translate</Text>
                         </Pressable>
-                        <Pressable style={[styles.btnTranslate, { backgroundColor: '#000677' }]}
-                            // onPress={() => setTranslate(prev => ({ ...prev, showNaver: true }))}
+                        <Pressable style={[styles.btnTranslate, { backgroundColor: '#000677', borderColor: '#000677', marginLeft: 8 }]}
                             onPress={() => navigation.navigate('Dictionary', { term })}
                         >
                             <Text colorName="textWhite" style={styles.btnText}>
@@ -192,13 +192,14 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
+        marginTop: 16
     },
     swapLabelContainer: {
         backgroundColor: Colors['dark']['lightPurple'],
         borderRadius: 15,
         paddingVertical: 8,
         width: 75,
-        alignItems: 'center'
+        alignItems: 'center',
     },
     swapLabel: {
         fontSize: 14,
@@ -226,7 +227,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         paddingVertical: 8,
         marginTop: 16,
-        marginHorizontal: 8
     },
     btnSave: {
         backgroundColor: Colors['light']['tint'],
