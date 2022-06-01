@@ -156,7 +156,7 @@ export default function AddWord() {
 
                 {isSaved &&
                     <View style={styles.savedContainer}>
-                        <Text colorName="tint" style={styles.label}>
+                        <Text colorName="textWhite" style={styles.label}>
                             Saved to Wordbook
                         </Text>
                     </View>
@@ -234,19 +234,26 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         paddingVertical: 8,
-        marginTop: 16
+        marginTop: 24
     },
     btnText: {
         fontSize: 15,
         fontFamily: 'DMSans_700Bold',
     },
     savedContainer: {
-        position: 'absolute',
-        top: 16,
+        marginTop: 24,
         alignSelf: 'center',
-        backgroundColor: Colors['dark']['lightPurple'],
+        backgroundColor: '#1BA0FF',
         paddingVertical: 8,
         paddingHorizontal: 16,
-        borderRadius: 10
+        borderRadius: 10,
+        shadowColor: "#1BA0FF",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.5,
+        shadowRadius: 10,
+        elevation: 10,
     }
 })
