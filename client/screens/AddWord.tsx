@@ -9,7 +9,8 @@ import { useMutation, useQuery, useQueryClient } from "react-query";
 import { GlobalContext, GlobalContextInterface, Word } from "../App";
 import { View, Text } from "../components/Themed";
 import Colors from "../constants/Colors";
-import useWordbook from "../hooks/useWordbook";
+import useCreateWord from "../hooks/useCreateWord";
+import useWordbook from "../hooks/useCreateWord";
 import translate from "../utils/gTranslate";
 import Dictionary from "./Dictionary";
 
@@ -27,7 +28,6 @@ enum targetEnum {
 interface TranslateProps {
     isTranslate: boolean;
     target: targetEnum.en | targetEnum.ko;
-    showNaver: boolean;
 }
 
 export default function AddWord() {
@@ -47,16 +47,14 @@ export default function AddWord() {
     const [translateState, setTranslate] = React.useState<TranslateProps>({
         isTranslate: false,
         target: targetEnum.ko,
-        showNaver: false,
     })
     const {
         isTranslate,
         target,
-        showNaver
     } = translateState
 
     // myWords array, createEntry mutation to localStorage
-    const [_, createEntry] = useWordbook(word, setWord)
+    const { createEntry } = useCreateWord(word, setWord)
 
     const { mutateAsync: translateTerm } = useMutation(() => translate(term, target),
         {

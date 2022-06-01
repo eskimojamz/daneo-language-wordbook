@@ -3,15 +3,17 @@ import { Keyboard } from "react-native"
 import { useQueryClient, useQuery, useMutation } from "react-query"
 import { Word } from "../App"
 import { WordStateProps } from "../screens/AddWord"
+import uuid from 'react-native-uuid'
 
-export default function useWordbook(word: WordStateProps, setWord: React.Dispatch<React.SetStateAction<WordStateProps>>) {
+export default function useCreateWord(word: WordStateProps, setWord: React.Dispatch<React.SetStateAction<WordStateProps>>) {
     const queryClient = useQueryClient()
 
     const { data: myWords } = useQuery<Word[] | []>('wordbook', async() => {
         return await AsyncStorage.getItem('wordbook').then(data => data ? JSON.parse(data) : [])
     })
 
-    const entry: Word = {
+    const entry = {
+        id: uuid.v4(),
         term: word.term,
         definition: word.definition,
         status: 'Learning',
@@ -32,7 +34,7 @@ export default function useWordbook(word: WordStateProps, setWord: React.Dispatc
             } else {
                 queryClient.setQueryData('wordbook', [entry])
             }
-            // rollback handler
+            // rollback value
             return current
         },
         onSuccess: () => {
@@ -51,5 +53,5 @@ export default function useWordbook(word: WordStateProps, setWord: React.Dispatc
         }
     })
 
-    return [myWords, createEntry] as const
+    return {createEntry} as const
 }

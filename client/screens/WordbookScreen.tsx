@@ -1,5 +1,5 @@
 import React from 'react'
-import { Modal, Pressable, ScrollView, StyleSheet } from 'react-native';
+import { Modal, Platform, Pressable, ScrollView, StyleSheet } from 'react-native';
 import { Text, View } from '../components/Themed';
 import { LinearGradient } from 'expo-linear-gradient';
 import { RootTabScreenProps } from '../types';
@@ -33,11 +33,15 @@ export default function WordbookScreen({ navigation }: RootTabScreenProps<'Wordb
         return (
           <Pressable
             style={styles.wordCard}
-            key={word.term + word.dateAdded.toString()}
+            key={word.id?.toString()}
             onLongPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).then(() => {
-                navigation.navigate('EditWord', { term: word.term, definition: word.definition })
-              })
+              if (Platform.OS === 'android' || 'ios') {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).then(() => {
+                  navigation.navigate('EditWord', { id: word.id, term: word.term, definition: word.definition, status: word.status })
+                })
+              } else if (Platform.OS === 'web') {
+                navigation.navigate('EditWord', { id: word.id, term: word.term, definition: word.definition, status: word.status })
+              }
             }}
           >
             <View style={styles.wordCardContainer}>

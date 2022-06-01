@@ -19,6 +19,7 @@ import { HoldMenuProvider } from 'react-native-hold-menu';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 
 export interface Word {
+  id: string | number[];
   term: string;
   definition: string;
   status: string;

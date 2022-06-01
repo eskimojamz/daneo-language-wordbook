@@ -15,8 +15,10 @@ declare global {
 
 export type RootStackParamList = {
   Root: NavigatorScreenParams<RootTabParamList> | undefined;
+  Home: undefined;
+  Wordbook: undefined;
   AddWord: undefined;
-  EditWord: { term: string, definition: string } | undefined;
+  EditWord: { id: string | number[], term: string, definition: string, status: string } | undefined;
   Dictionary: { term: string } | undefined;
   Modal: undefined;
   NotFound: undefined;
