@@ -131,6 +131,11 @@ function BottomTabNavigator() {
         component={Home}
         options={{
           title: 'Home',
+            headerTitleStyle: {
+                color: Colors[colorScheme].textDark,
+                fontSize: 24,
+                fontFamily: 'DMSans_700Bold'
+            },
           tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
         }}
       />
@@ -144,21 +149,7 @@ function BottomTabNavigator() {
             fontSize: 24,
             fontFamily: 'DMSans_700Bold'
           },
-          tabBarIcon: ({ color }) => <TabBarIcon name="notebook" color={color} />,
-          // headerRight: () => (
-          //   <Pressable
-          //     onPress={() => navigation.navigate('Modal')}
-          //     style={({ pressed }) => ({
-          //       opacity: pressed ? 0.5 : 1,
-          //     })}>
-          //     <FontAwesome
-          //       name="info-circle"
-          //       size={25}
-          //       color={Colors[colorScheme].text}
-          //       style={{ marginRight: 15 }}
-          //     />
-          //   </Pressable>
-          // ),
+          tabBarIcon: ({ color }) => <TabBarIcon name="notebook" color={color} />
         })}
       />
       <BottomTab.Screen
