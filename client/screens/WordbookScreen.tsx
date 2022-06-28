@@ -1,27 +1,27 @@
-import React from 'react'
+import React, {useState} from 'react'
 import { Platform, Pressable, ScrollView, StyleSheet } from 'react-native';
 import { Text, View } from '../components/Themed';
 import { LinearGradient } from 'expo-linear-gradient';
 import { RootTabScreenProps } from '../types';
-import { GlobalContext, GlobalContextInterface, Word } from '../App';
+import { Word } from '../App';
 import { useQuery } from 'react-query';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Haptics from 'expo-haptics'
 import { useActionSheet } from '@expo/react-native-action-sheet';
-import deleteWord from '../hooks/deleteWord';
-import Dialog from 'react-native-dialog'
+import useDeleteWord from "../hooks/useDeleteWord";
 
 export default function WordbookScreen({ navigation }: RootTabScreenProps<'Wordbook'>) {
-  // const { myWords } = React.useContext(GlobalContext) as GlobalContextInterface
   const { data: myWords } = useQuery('wordbook', async () => {
     return await AsyncStorage.getItem('wordbook').then(data => {
       console.log(data)
       return data ? JSON.parse(data) : undefined
     })
   })
-  console.log(myWords)
 
-  const [wordToDelete, setWordToDelete] = React.useState<Word>()
+  // state for deleting a word
+  const [wordToDelete, setWordToDelete] = useState<Word>()
+  // deleteEntry for word
+  const { deleteEntry } = useDeleteWord(wordToDelete)
 
   const { showActionSheetWithOptions } = useActionSheet()
 
@@ -44,8 +44,18 @@ export default function WordbookScreen({ navigation }: RootTabScreenProps<'Wordb
             } else if (Platform.OS === 'web') {
               navigation.navigate('EditWord', { id: word.id, term: word.term, definition: word.definition, status: word.status })
             }
+            break
           case 1:
-            setWordToDelete(word)
+            if (Platform.OS === 'android' || 'ios') {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).then(() => {
+                setWordToDelete(word)
+                deleteEntry()
+              })
+            } else if (Platform.OS === 'web') {
+              setWordToDelete(word)
+              deleteEntry()
+            }
+            break
           default:
             break;
         }
@@ -54,16 +64,6 @@ export default function WordbookScreen({ navigation }: RootTabScreenProps<'Wordb
 
   return (
     <ScrollView style={styles.container}>
-      <View>
-        <Dialog.Container>
-          <Dialog.Title>Account delete</Dialog.Title>
-          <Dialog.Description>
-            Do you want to delete this account? You cannot undo this action.
-          </Dialog.Description>
-          <Dialog.Button label="Cancel" onPress={() => { }} />
-          <Dialog.Button label="Delete" onPress={() => { }} />
-        </Dialog.Container>
-      </View>
       <LinearGradient
         style={styles.quizCard}
         colors={['(rgba(27, 159, 255, 1)', 'rgba(93, 216, 194, 1))']}
@@ -77,7 +77,7 @@ export default function WordbookScreen({ navigation }: RootTabScreenProps<'Wordb
           <Pressable
             style={styles.wordCard}
             key={word.id?.toString()}
-            onLongPress={() => showActions(word)}
+            onLongPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).then(() => showActions(word))}
           >
             <View style={styles.wordCardContainer}>
               <View style={styles.wordCardMain}>
