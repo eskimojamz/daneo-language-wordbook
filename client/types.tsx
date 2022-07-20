@@ -34,7 +34,7 @@ export type RootTabParamList = {
   Wordbook: undefined;
   AddWordBase: undefined;
   TabTwo: undefined;
-  Study: undefined;
+  Quiz: undefined;
   Settings: undefined;
 };
 

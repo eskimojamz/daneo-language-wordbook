@@ -26,6 +26,7 @@ import AddWord from '../screens/AddWord';
 import AddWordBase from '../screens/AddWordBase';
 import Dictionary from '../screens/Dictionary';
 import EditWord from '../screens/EditWord';
+import Quiz from "../screens/Quiz";
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -59,7 +60,7 @@ function RootNavigator() {
               color: Colors[colorScheme].textDark,
               fontSize: 24,
               fontFamily: 'DMSans_700Bold'
-            }
+            },
           }}
         />
         <Stack.Screen name="EditWord" component={EditWord}
@@ -111,7 +112,7 @@ function BottomTabNavigator() {
 
   return (
     <BottomTab.Navigator
-      initialRouteName="Wordbook"
+      initialRouteName="Home"
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme].tint,
         tabBarInactiveTintColor: '#A0A1C5',
@@ -130,26 +131,34 @@ function BottomTabNavigator() {
         name="Home"
         component={Home}
         options={{
-          title: 'Home',
+            title: 'Home',
             headerTitleStyle: {
                 color: Colors[colorScheme].textDark,
-                fontSize: 24,
+                fontSize: 28,
                 fontFamily: 'DMSans_700Bold'
             },
-          tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
+            headerTitleAlign: 'left',
+            headerStyle: {
+                shadowColor: 'transparent',
+            },
+            tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
         }}
       />
       <BottomTab.Screen
         name="Wordbook"
         component={WordbookScreen}
         options={({ navigation }: RootTabScreenProps<'Wordbook'>) => ({
-          title: 'Wordbook',
-          headerTitleStyle: {
+            title: 'Wordbook',
+            headerTitleStyle: {
             color: Colors[colorScheme].textDark,
-            fontSize: 24,
+            fontSize: 28,
             fontFamily: 'DMSans_700Bold'
-          },
-          tabBarIcon: ({ color }) => <TabBarIcon name="notebook" color={color} />
+            },
+            headerTitleAlign: 'left',
+            headerStyle: {
+                shadowColor: 'transparent',
+            },
+            tabBarIcon: ({ color }) => <TabBarIcon name="notebook" color={color} />
         })}
       />
       <BottomTab.Screen
@@ -167,10 +176,19 @@ function BottomTabNavigator() {
         })}
       />
       <BottomTab.Screen
-        name="Study"
-        component={NotFoundScreen}
+        name="Quiz"
+        component={Quiz}
         options={{
-          title: 'Tab Two',
+          title: 'Quiz',
+            headerTitleStyle: {
+                color: Colors[colorScheme].textDark,
+                fontSize: 28,
+                fontFamily: 'DMSans_700Bold'
+            },
+            headerTitleAlign: 'left',
+            headerStyle: {
+                shadowColor: 'transparent',
+            },
           tabBarIcon: ({ color }) => <TabBarIcon name="graduation" color={color} />,
         }}
       />
@@ -178,7 +196,16 @@ function BottomTabNavigator() {
         name="Settings"
         component={Settings}
         options={{
-          title: 'Tab Two',
+          title: 'Settings',
+            headerTitleStyle: {
+                color: Colors[colorScheme].textDark,
+                fontSize: 28,
+                fontFamily: 'DMSans_700Bold'
+            },
+            headerTitleAlign: 'left',
+            headerStyle: {
+                shadowColor: 'transparent',
+            },
           tabBarIcon: ({ color }) => <TabBarIcon name="settings" color={color} />,
         }}
       />

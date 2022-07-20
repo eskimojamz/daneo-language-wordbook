@@ -28,6 +28,10 @@ export default function Home() {
 
     return (
         <ScrollView style={styles.container}>
+            <LinearGradient style={styles.quizCard} colors={['(rgba(27, 159, 255, 1)', 'rgba(93, 216, 194, 1))']}>
+                <Text style={styles.quizText} colorName="textDark">Wordbook</Text>
+                <Text style={styles.quizText} colorName="textDark">Quiz</Text>
+            </LinearGradient>
             <View style={styles.section}>
                 <Text style={styles.title} colorName='textDark'>Recent Words</Text>
                 <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
@@ -42,15 +46,6 @@ export default function Home() {
                         </View>
                     )
                 })}
-                </ScrollView>
-            </View>
-            <View style={styles.section}>
-                <Text style={styles.title} colorName='textDark'>Continue Learning</Text>
-                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-                    <LinearGradient style={styles.learnCard} colors={['(rgba(27, 159, 255, 1)', 'rgba(93, 216, 194, 1))']}>
-                        <Text style={styles.learnText} colorName="textDark">Wordbook</Text>
-                        <Text style={styles.learnText} colorName="textDark">Quiz</Text>
-                    </LinearGradient>
                 </ScrollView>
             </View>
             <View style={styles.section}>
@@ -81,7 +76,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
-        paddingTop: 8,
+        paddingTop: 16,
     },
     section: {
         marginTop: 24,
@@ -93,8 +88,20 @@ const styles = StyleSheet.create({
         marginBottom: 16,
         paddingHorizontal: 16,
     },
+    quizCard: {
+        height: 170,
+        width: 'auto',
+        borderRadius: 15,
+        padding: 16,
+        justifyContent: 'flex-end',
+        marginHorizontal: 16,
+    },
+    quizText: {
+        fontSize: 32,
+        fontFamily: 'DMSans_700Bold'
+    },
     wordCard: {
-        height: 'auto',
+        height: 150,
         width: 250,
         paddingHorizontal: 16,
         display: 'flex',
@@ -103,18 +110,6 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 15,
         marginLeft: 16,
-    },
-    learnCard: {
-        height: 170,
-        width: 250,
-        borderRadius: 15,
-        padding: 16,
-        justifyContent: 'flex-end',
-        marginLeft: 16,
-    },
-    learnText: {
-        fontSize: 32,
-        fontFamily: 'DMSans_700Bold'
     },
     glanceCard: {
         height: 170,

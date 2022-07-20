@@ -18,9 +18,10 @@ export interface WordStateProps {
     term: string;
     definition: string;
     isSaved: boolean;
+    termLang: targetEnum;
 }
 
-enum targetEnum {
+export enum targetEnum {
     en = 'en',
     ko = 'ko'
 }
@@ -36,8 +37,10 @@ export default function AddWord() {
     const [word, setWord] = React.useState<WordStateProps>({
         term: '',
         definition: '',
-        isSaved: false
+        isSaved: false,
+        termLang: targetEnum.en
     })
+
     const {
         term,
         definition,
@@ -48,6 +51,7 @@ export default function AddWord() {
         isTranslate: false,
         target: targetEnum.ko,
     })
+
     const {
         isTranslate,
         target,

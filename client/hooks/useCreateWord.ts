@@ -1,14 +1,14 @@
 import AsyncStorage from "@react-native-async-storage/async-storage"
-import { Keyboard } from "react-native"
-import { useQueryClient, useQuery, useMutation } from "react-query"
-import { Word } from "../App"
-import { WordStateProps } from "../screens/AddWord"
+import {Keyboard} from "react-native"
+import {useMutation, useQuery, useQueryClient} from "react-query"
+import {Word} from "../App"
+import {targetEnum, WordStateProps} from "../screens/AddWord"
 import uuid from 'react-native-uuid'
 
 export default function useCreateWord(word: WordStateProps, setWord: React.Dispatch<React.SetStateAction<WordStateProps>>) {
     const queryClient = useQueryClient()
 
-    const { data: myWords } = useQuery<Word[] | []>('wordbook', async() => {
+    const { data: myWords, refetch: refetchMyWords } = useQuery<Word[] | []>('wordbook', async() => {
         return await AsyncStorage.getItem('wordbook').then(data => data ? JSON.parse(data) : [])
     })
 
@@ -16,6 +16,7 @@ export default function useCreateWord(word: WordStateProps, setWord: React.Dispa
         id: uuid.v4(),
         term: word.term,
         definition: word.definition,
+        termLang: /^[a-zA-Z]+$/.test(word.term) ? 'en' : 'ko',
         status: 'Learning',
         dateAdded: Date.now()
     }
@@ -38,10 +39,11 @@ export default function useCreateWord(word: WordStateProps, setWord: React.Dispa
             return current
         },
         onSuccess: () => {
-            setWord({term: '', definition: '', isSaved: true})
+            setWord({term: '', definition: '', termLang: targetEnum.en, isSaved: true})
             setTimeout(() => {
                 setWord(prev => ({...prev, isSaved: false}))
             }, 1000)
+            refetchMyWords()
         },
         onError: (error, _, rollback) => {
             console.error(error)

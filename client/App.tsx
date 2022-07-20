@@ -13,7 +13,7 @@ import useColorScheme from './hooks/useColorScheme';
 import Navigation from './navigation';
 import React, { createContext, useCallback, useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import {QueryClient, QueryClientProvider, useQuery} from 'react-query';
 import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 import { HoldMenuProvider } from 'react-native-hold-menu';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
@@ -25,9 +25,10 @@ export interface Word {
   status: string;
   dateAdded: number;
 }
+
 export interface GlobalContextInterface {
-  myWords: Word[];
-  setMyWords: React.Dispatch<React.SetStateAction<Word[]>>
+  myWords: Word[] | undefined;
+  // setMyWords: React.Dispatch<React.SetStateAction<Word[]>>
 }
 
 export const GlobalContext = createContext<GlobalContextInterface | null>(null)
@@ -49,10 +50,13 @@ export default function App() {
     )
   })
 
+  // const { data: myWords } = useQuery<Word[] | []>('wordbook', async() => {
+  //   return await AsyncStorage.getItem('wordbook').then(data => data ? JSON.parse(data) : [])
+  // })
+
   // global state object for GlobalContext Provider value
   const globalState = {
-    myWords,
-    setMyWords
+    myWords
   }
 
   useEffect(() => {
