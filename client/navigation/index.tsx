@@ -32,7 +32,8 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
   return (
     <NavigationContainer
       linking={LinkingConfiguration}
-      theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
+      // theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
+      theme={DefaultTheme}
     >
       <RootNavigator />
     </NavigationContainer>
@@ -46,7 +47,8 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function RootNavigator() {
-  const colorScheme = useColorScheme();
+  // const colorScheme = useColorScheme();
+    const colorScheme = 'light';
 
   return (
     <Stack.Navigator>
