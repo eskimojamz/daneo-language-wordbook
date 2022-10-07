@@ -9,6 +9,7 @@ export type Param = {
     EditWord: {
         id: string | number[],
         term: string,
+        termLang: string,
         definition: string,
         status: string,
         isSaved: boolean,
@@ -23,6 +24,7 @@ export default function EditWord() {
     const [word, setWord] = React.useState<Param['EditWord']>({
         id: route.params.id,
         term: route.params.term,
+        termLang: route.params.termLang,
         definition: route.params.definition,
         status: route.params.status,
         isSaved: false,

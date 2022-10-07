@@ -18,7 +18,7 @@ export type RootStackParamList = {
   Home: undefined;
   Wordbook: undefined;
   AddWord: undefined;
-  EditWord: { id: string | number[], term: string, definition: string, status: string } | undefined;
+  EditWord: { id: string | number[], term: string, termLang: string, definition: string, status: string } | undefined;
   Dictionary: { term: string } | undefined;
   Modal: undefined;
   NotFound: undefined;

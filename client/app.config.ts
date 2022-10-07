@@ -14,8 +14,12 @@ export default {
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    },
     "updates": {
-      "fallbackToCacheTimeout": 0
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/4812ddcd-feb9-4607-9bb9-86f190b31801"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -33,7 +37,10 @@ export default {
       "favicon": "./assets/images/favicon.png"
     },
     "extra": {
-      translateKey: process.env.TRANSLATE_KEY
+      translateKey: process.env.TRANSLATE_KEY,
+      "eas": {
+        "projectId": "4812ddcd-feb9-4607-9bb9-86f190b31801"
+      }
     }
   }
 };

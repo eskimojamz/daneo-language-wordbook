@@ -21,6 +21,7 @@ import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 export interface Word {
   id: string | number[];
   term: string;
+  termLang: string;
   definition: string;
   status: string;
   dateAdded: number;

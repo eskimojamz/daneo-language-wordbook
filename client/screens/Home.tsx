@@ -6,8 +6,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import {Word} from "../App";
 import WordCard from "../components/WordCard";
 import {LinearGradient} from "expo-linear-gradient";
+import {useNavigation} from "@react-navigation/native";
+import {RootTabScreenProps} from "../types";
 
-export default function Home() {
+export default function Home({navigation}: RootTabScreenProps<'Home'>) {
+
     const { data: myWords } = useQuery('wordbook', async () => {
         return await AsyncStorage.getItem('wordbook').then(data => {
             return data ? JSON.parse(data) : undefined
@@ -19,19 +22,21 @@ export default function Home() {
     }, [myWords])
 
     const myWordsLearning = useMemo(() => {
-        return myWords ? myWords.filter((word: Word) => word.status === 'Learning').length : ''
+        return myWords ? myWords.filter((word: Word) => word.status === 'Learning').length : 0
     }, [myWords])
 
     const myWordsMastered = useMemo(() => {
-        return myWords ? myWords.filter((word: Word) => word.status === 'Mastered').length : ''
+        return myWords ? myWords.filter((word: Word) => word.status === 'Mastered').length : 0
     }, [myWords])
 
     return (
         <ScrollView style={styles.container}>
-            <LinearGradient style={styles.quizCard} colors={['(rgba(27, 159, 255, 1)', 'rgba(93, 216, 194, 1))']}>
-                <Text style={styles.quizText} colorName="textDark">Wordbook</Text>
-                <Text style={styles.quizText} colorName="textDark">Quiz</Text>
-            </LinearGradient>
+            <Pressable onPress={() => navigation.navigate('Quiz')}>
+                <LinearGradient style={styles.quizCard} colors={['(rgba(27, 159, 255, 1)', 'rgba(93, 216, 194, 1))']}>
+                    <Text style={styles.quizText} colorName="textDark">Wordbook</Text>
+                    <Text style={styles.quizText} colorName="textDark">Quiz</Text>
+                </LinearGradient>
+            </Pressable>
             <View style={styles.section}>
                 <Text style={styles.title} colorName='textDark'>Recent Words</Text>
                 <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>

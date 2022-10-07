@@ -12,14 +12,16 @@ export default function Quiz() {
             return data ? JSON.parse(data) : undefined
         })
     })
+    console.log(myWords);
 
     // returns random element from array
     function getRandom(arr: string | any[], n: number) {
         let result = new Array(n),
             len = arr.length,
             taken = new Array(len);
-        if (n > len)
+        if (n > len) {
             throw new RangeError("getRandom: more elements taken than available");
+        }
         while (n--) {
             const x = Math.floor(Math.random() * len);
             result[n] = arr[x in taken ? taken[x] : x];
@@ -57,8 +59,9 @@ export default function Quiz() {
             };
             let correct = w.definition; // correct answer
             let wrongs = []; // wrong answers
-            let wrongsFiltered = fQuizWords.filter((x: any) => x !== w)
-            let wrongObjs = getRandom(wrongsFiltered, 3); // 3 choices
+            let wrongsFiltered = fQuizWords.filter((x: any) => x !== w);
+            let nChoices = wrongsFiltered.length < 3 ? wrongsFiltered.length : 3;
+            let wrongObjs = getRandom(wrongsFiltered, nChoices); // 3 choices
             for (let obj of wrongObjs) {
                 wrongs.push(obj.definition);
             }
@@ -210,14 +213,13 @@ export default function Quiz() {
                 ? /* If finished, show result  */
                     <>
                         <View style={styles.quizResult}>
-                            <Text colorName="textDark">Quiz Result</Text>
+                            <Text colorName="textDark" style={styles.quizResultLabel}>Quiz Result</Text>
                             <View style={styles.scoreBarContainer}>
                                 <View style={[styles.scoreBar, scoreBarStyles(scoreBarWidth).css]}/>
                             </View>
                             <Text colorName="textDark" style={styles.currentWordText}>
                                 Score: {score} / {scoreAttempts} ({Math.round((score / scoreAttempts) * 100)}%)
                             </Text>
-
                         </View>
                         <Pressable style={styles.button} onPress={startNewQuiz}>
                             <Text colorName="textWhite" style={styles.btnText}>
@@ -301,6 +303,11 @@ const styles = StyleSheet.create({
     },
     quizResult: {
         width: '100%',
+        paddingBottom: 10
+    },
+    quizResultLabel: {
+        fontFamily: 'DMSans_500Medium',
+        fontSize: 20,
     },
     scoreBarContainer: {
         position: "relative",

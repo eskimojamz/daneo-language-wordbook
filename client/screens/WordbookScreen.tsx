@@ -40,10 +40,10 @@ export default function WordbookScreen({ navigation }: RootTabScreenProps<'Wordb
           case 0:
             if (Platform.OS === 'android' || 'ios') {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).then(() => {
-                navigation.navigate('EditWord', { id: word.id, term: word.term, definition: word.definition, status: word.status })
+                navigation.navigate('EditWord', { id: word.id, term: word.term, termLang: word.termLang, definition: word.definition, status: word.status })
               })
             } else if (Platform.OS === 'web') {
-              navigation.navigate('EditWord', { id: word.id, term: word.term, definition: word.definition, status: word.status })
+              navigation.navigate('EditWord', { id: word.id, term: word.term, termLang: word.termLang, definition: word.definition, status: word.status })
             }
             break
           case 1:
@@ -65,13 +65,15 @@ export default function WordbookScreen({ navigation }: RootTabScreenProps<'Wordb
 
   return (
     <ScrollView style={styles.container}>
-      <LinearGradient
-        style={styles.quizCard}
-        colors={['(rgba(27, 159, 255, 1)', 'rgba(93, 216, 194, 1))']}
-      >
-        <Text style={{ fontSize: 32, fontFamily: 'DMSans_700Bold' }} colorName='textDark'>Wordbook</Text>
-        <Text style={{ fontSize: 32, fontFamily: 'DMSans_700Bold' }} colorName='textDark'>Quiz</Text>
-      </LinearGradient>
+      <Pressable onPress={() => navigation.navigate('Quiz')}>
+        <LinearGradient
+          style={styles.quizCard}
+          colors={['(rgba(27, 159, 255, 1)', 'rgba(93, 216, 194, 1))']}
+        >
+          <Text style={{ fontSize: 32, fontFamily: 'DMSans_700Bold' }} colorName='textDark'>Wordbook</Text>
+          <Text style={{ fontSize: 32, fontFamily: 'DMSans_700Bold' }} colorName='textDark'>Quiz</Text>
+        </LinearGradient>
+      </Pressable>
       {/* Map word cards */}
       {myWords && myWords.map((word: Word) => {
         return (

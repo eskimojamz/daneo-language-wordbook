@@ -10,10 +10,10 @@ export default async function translate(term: string, target: string) {
         headers: {
             'Content-Type': 'application/json',
         },
-        mode: 'cors'
     })
     .then(res => res.json())
     .then(res => {
+        console.log(res.data.translations);
         return res.data.translations[0].translatedText
     })
     .catch(err => console.error(err))
